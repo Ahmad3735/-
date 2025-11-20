@@ -1,5 +1,6 @@
-const CACHE_NAME = 'noor-islam-cache-v11';
-const DATA_CACHE_NAME = 'noor-islam-data-v11';
+
+const CACHE_NAME = 'noor-islam-cache-v14';
+const DATA_CACHE_NAME = 'noor-islam-data-v14';
 
 const STATIC_ASSETS = [
   '/manifest.json',
@@ -35,11 +36,36 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // 1. Network First for HTML/JS to ensure app is always fresh during dev
-  if (requestUrl.origin === location.origin && (requestUrl.pathname.endsWith('.html') || requestUrl.pathname.endsWith('.js'))) {
+  // 1. Stale-While-Revalidate for App Shell and Code Files
+  // This is the optimal strategy for performance: Show cached version INSTANTLY,
+  // then update cache in background for next time.
+  if (
+      requestUrl.origin === location.origin && 
+      (
+        requestUrl.pathname.endsWith('.html') || 
+        requestUrl.pathname.endsWith('.js') || 
+        requestUrl.pathname.endsWith('.ts') || 
+        requestUrl.pathname.endsWith('.tsx') ||
+        requestUrl.pathname.endsWith('.css') ||
+        requestUrl.pathname.endsWith('.json')
+      )
+  ) {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match(event.request))
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
+            if(networkResponse.ok) {
+               cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => {
+            // Network failed, nothing to update, just swallow error
+          });
+          
+          // Return cached response if available, else wait for network
+          return cachedResponse || fetchPromise;
+        });
+      })
     );
     return;
   }
@@ -66,7 +92,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Default Cache First for assets
+  // 3. Default Cache First for other static assets (Images, Fonts)
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);

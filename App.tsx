@@ -1,26 +1,29 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import PrayerTimesPage from './pages/PrayerTimesPage';
-import QuranPage from './pages/QuranPage';
-import HadithPage from './pages/HadithPage';
-import PrayerTimesMapPage from './pages/PrayerTimesMapPage';
-import QiblaPage from './pages/QiblaPage';
-import AdhkarPage from './pages/AdhkarPage';
-import NamesOfAllahPage from './pages/NamesOfAllahPage';
-import FastingCalendarPage from './pages/FastingCalendarPage';
-import ZakatPage from './pages/ZakatPage';
-import QuizPage from './pages/QuizPage';
-import FastingReminder from './components/FastingReminder';
 import Navbar from './components/Navbar';
 import Footer from './components/ui/Footer';
 import SEO from './components/SEO';
 import GlobalPlayer from './components/GlobalPlayer';
 import ScrollToTop from './components/ScrollToTop';
+import LoadingSpinner from './components/ui/LoadingSpinner';
+import FastingReminder from './components/FastingReminder';
 import { LanguageContext } from './contexts/LanguageContext';
 import { AudioProvider } from './contexts/AudioContext';
 import { translations } from './i18n';
+
+// Lazy Load Pages for Performance
+const HomePage = lazy(() => import('./pages/HomePage'));
+const PrayerTimesPage = lazy(() => import('./pages/PrayerTimesPage'));
+const QuranPage = lazy(() => import('./pages/QuranPage'));
+const HadithPage = lazy(() => import('./pages/HadithPage'));
+const PrayerTimesMapPage = lazy(() => import('./pages/PrayerTimesMapPage'));
+const QiblaPage = lazy(() => import('./pages/QiblaPage'));
+const AdhkarPage = lazy(() => import('./pages/AdhkarPage'));
+const NamesOfAllahPage = lazy(() => import('./pages/NamesOfAllahPage'));
+const FastingCalendarPage = lazy(() => import('./pages/FastingCalendarPage'));
+const ZakatPage = lazy(() => import('./pages/ZakatPage'));
+const QuizPage = lazy(() => import('./pages/QuizPage'));
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -86,19 +89,25 @@ const App: React.FC = () => {
             />
             <FastingReminder />
             <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-              <Routes>
-                <Route path="/" element={<><SEO title={t.navHome} /><HomePage /></>} />
-                <Route path="/prayer-times" element={<><SEO title={t.navPrayerTimes} /><PrayerTimesPage /></>} />
-                <Route path="/prayer-times-map" element={<><SEO title={t.navPrayerTimesMap} /><PrayerTimesMapPage /></>} />
-                <Route path="/quran" element={<><SEO title={t.navQuran} /><QuranPage /></>} />
-                <Route path="/hadith" element={<><SEO title={t.navHadith} /><HadithPage /></>} />
-                <Route path="/adhkar" element={<><SEO title={t.navAdhkar} /><AdhkarPage /></>} />
-                <Route path="/names-of-allah" element={<><SEO title={t.navNamesOfAllah} /><NamesOfAllahPage /></>} />
-                <Route path="/fasting" element={<><SEO title={t.navFasting} /><FastingCalendarPage /></>} />
-                <Route path="/zakat" element={<><SEO title={t.navZakat} /><ZakatPage /></>} />
-                <Route path="/quiz" element={<><SEO title={t.navQuiz} /><QuizPage /></>} />
-                <Route path="/qibla" element={<><SEO title={t.navQibla} /><QiblaPage /></>} />
-              </Routes>
+              <Suspense fallback={
+                <div className="flex justify-center items-center min-h-[60vh]">
+                  <LoadingSpinner size="lg" />
+                </div>
+              }>
+                <Routes>
+                  <Route path="/" element={<><SEO title={t.navHome} /><HomePage /></>} />
+                  <Route path="/prayer-times" element={<><SEO title={t.navPrayerTimes} /><PrayerTimesPage /></>} />
+                  <Route path="/prayer-times-map" element={<><SEO title={t.navPrayerTimesMap} /><PrayerTimesMapPage /></>} />
+                  <Route path="/quran" element={<><SEO title={t.navQuran} /><QuranPage /></>} />
+                  <Route path="/hadith" element={<><SEO title={t.navHadith} /><HadithPage /></>} />
+                  <Route path="/adhkar" element={<><SEO title={t.navAdhkar} /><AdhkarPage /></>} />
+                  <Route path="/names-of-allah" element={<><SEO title={t.navNamesOfAllah} /><NamesOfAllahPage /></>} />
+                  <Route path="/fasting" element={<><SEO title={t.navFasting} /><FastingCalendarPage /></>} />
+                  <Route path="/zakat" element={<><SEO title={t.navZakat} /><ZakatPage /></>} />
+                  <Route path="/quiz" element={<><SEO title={t.navQuiz} /><QuizPage /></>} />
+                  <Route path="/qibla" element={<><SEO title={t.navQibla} /><QiblaPage /></>} />
+                </Routes>
+              </Suspense>
             </main>
             <Footer />
             <GlobalPlayer />
