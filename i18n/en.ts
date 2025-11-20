@@ -14,6 +14,7 @@ export const ENGLISH_UI_TEXT: Translation = {
   navFasting: "Fasting",
   navZakat: "Zakat Calculator",
   navQuiz: "Islamic Quiz",
+  navFeelings: "Heart's Pharmacy",
   navAskAI: "",
 
   footerQuote: "Indeed, with hardship will be ease.",
@@ -153,6 +154,13 @@ export const ENGLISH_UI_TEXT: Translation = {
   quizCorrect: "Correct!",
   quizWrong: "Wrong answer.",
 
-  // General
+  // Feelings
+  feelingsTitle: "Heart's Pharmacy",
+  feelingsDescription: "Remedies from Quran & Sunnah for every emotion.",
+  feelingsHowAreYou: "How are you feeling today?",
+  feelingsQuranicPrescription: "Quranic Prescription",
+  feelingsPropheticDua: "Prophetic Dua",
+  feelingsPracticalStep: "Practical Step",
+
   installApp: "Install App",
 };

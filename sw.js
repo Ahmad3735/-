@@ -1,6 +1,5 @@
-
-const CACHE_NAME = 'noor-islam-cache-v14';
-const DATA_CACHE_NAME = 'noor-islam-data-v14';
+const CACHE_NAME = 'noor-islam-cache-v15';
+const DATA_CACHE_NAME = 'noor-islam-data-v15';
 
 const STATIC_ASSETS = [
   '/manifest.json',
@@ -36,9 +35,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // 1. Stale-While-Revalidate for App Shell and Code Files
-  // This is the optimal strategy for performance: Show cached version INSTANTLY,
-  // then update cache in background for next time.
+  // 1. Network First for App Shell and Code Files
+  // CRITICAL FIX: Added .tsx, .ts, .json to ensure app code updates immediately during dev
   if (
       requestUrl.origin === location.origin && 
       (
@@ -51,21 +49,8 @@ self.addEventListener('fetch', (event) => {
       )
   ) {
     event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request).then((networkResponse) => {
-            if(networkResponse.ok) {
-               cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
-          }).catch(() => {
-            // Network failed, nothing to update, just swallow error
-          });
-          
-          // Return cached response if available, else wait for network
-          return cachedResponse || fetchPromise;
-        });
-      })
+      fetch(event.request)
+        .catch(() => caches.match(event.request))
     );
     return;
   }

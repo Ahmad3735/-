@@ -27,12 +27,13 @@ const HomePage: React.FC = () => {
   const quickLinks = [
     { to: "/prayer-times", label: t.navPrayerTimes, icon: "🕒", color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300" },
     { to: "/quran", label: t.navQuran, icon: "📖", color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    { to: "/feelings", label: t.navFeelings, icon: "❤️", color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300" }, // NEW
     { to: "/hadith", label: t.navHadith, icon: "📜", color: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300" },
     { to: "/adhkar", label: t.navAdhkar, icon: "📿", color: "bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300" },
     { to: "/names-of-allah", label: t.navNamesOfAllah, icon: "✨", color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300" },
     { to: "/fasting", label: t.navFasting, icon: "📅", color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300" },
     { to: "/zakat", label: t.navZakat, icon: "💰", color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300" },
-    { to: "/quiz", label: t.navQuiz, icon: "🧠", color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300" },
+    { to: "/quiz", label: t.navQuiz, icon: "🧠", color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300" },
   ];
 
   return (

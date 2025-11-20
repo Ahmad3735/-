@@ -24,6 +24,7 @@ const NamesOfAllahPage = lazy(() => import('./pages/NamesOfAllahPage'));
 const FastingCalendarPage = lazy(() => import('./pages/FastingCalendarPage'));
 const ZakatPage = lazy(() => import('./pages/ZakatPage'));
 const QuizPage = lazy(() => import('./pages/QuizPage'));
+const FeelingsPage = lazy(() => import('./pages/FeelingsPage'));
 
 const App: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -106,6 +107,7 @@ const App: React.FC = () => {
                   <Route path="/zakat" element={<><SEO title={t.navZakat} /><ZakatPage /></>} />
                   <Route path="/quiz" element={<><SEO title={t.navQuiz} /><QuizPage /></>} />
                   <Route path="/qibla" element={<><SEO title={t.navQibla} /><QiblaPage /></>} />
+                  <Route path="/feelings" element={<><SEO title={t.navFeelings} /><FeelingsPage /></>} />
                 </Routes>
               </Suspense>
             </main>

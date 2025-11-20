@@ -14,6 +14,7 @@ export const ARABIC_UI_TEXT: Translation = {
   navFasting: "التقويم والصيام",
   navZakat: "حاسبة الزكاة",
   navQuiz: "اختبر معلوماتك",
+  navFeelings: "صيدلية القلوب",
   // Removed navHadithVerification and navAskAI
   navAskAI: "", // Deprecated
 
@@ -154,6 +155,14 @@ export const ARABIC_UI_TEXT: Translation = {
   quizRestart: "إعادة المحاولة",
   quizCorrect: "إجابة صحيحة! أحسنت",
   quizWrong: "إجابة خاطئة. حاول مرة أخرى",
+
+  // Feelings
+  feelingsTitle: "صيدلية القلوب",
+  feelingsDescription: "علاجك من القرآن والسنة لكل ما تشعر به.",
+  feelingsHowAreYou: "بماذا تشعر اليوم؟",
+  feelingsQuranicPrescription: "الوصفة القرآنية",
+  feelingsPropheticDua: "الدعاء النبوي",
+  feelingsPracticalStep: "خطوة عملية",
 
   installApp: "تثبيت التطبيق",
 };

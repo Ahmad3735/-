@@ -53,6 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onThemeToggle }) => {
     { to: "/", label: t.navHome },
     { to: "/prayer-times", label: t.navPrayerTimes },
     { to: "/quran", label: t.navQuran },
+    { to: "/feelings", label: "❤️ " + t.navFeelings }, // Highlighted
     { to: "/hadith", label: t.navHadith },
     { to: "/adhkar", label: t.navAdhkar },
     { to: "/names-of-allah", label: t.navNamesOfAllah },
@@ -165,6 +166,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onThemeToggle }) => {
             <Link
               key={link.to}
               to={link.to}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`block px-5 py-4 rounded-2xl text-base font-medium transition-colors ${
                 isActive(link.to)
                   ? 'bg-primary/10 text-primary'

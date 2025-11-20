@@ -134,6 +134,21 @@ export interface QuizQuestion {
   explanation?: string;
 }
 
+// Feelings / Moods Types
+export interface FeelingRemedy {
+  id: string;
+  emotionAr: string;
+  emotionEn: string;
+  emoji: string;
+  verses: {
+    arabic: string;
+    surah: string;
+    tafsir?: string;
+  }[];
+  dua: string;
+  actionStep: string;
+}
+
 // Audio Context Types
 export type ReciterId = 'hussary' | 'minshawi';
 
@@ -167,6 +182,7 @@ export interface Translation {
   navFasting: string;
   navZakat: string;
   navQuiz: string; 
+  navFeelings: string; // NEW
   navAskAI: string;
   footerQuote: string;
   allRightsReserved: string;
@@ -304,6 +320,14 @@ export interface Translation {
   quizRestart: string;
   quizCorrect: string;
   quizWrong: string;
+
+  // Feelings
+  feelingsTitle: string;
+  feelingsDescription: string;
+  feelingsHowAreYou: string;
+  feelingsQuranicPrescription: string;
+  feelingsPropheticDua: string;
+  feelingsPracticalStep: string;
 
   // General
   installApp: string;
