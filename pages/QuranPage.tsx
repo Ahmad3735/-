@@ -5,6 +5,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAudio } from '../contexts/AudioContext';
 import type { QuranApiSurah } from '../types';
 
 const VERSES_PER_UI_PAGE = 20;
@@ -18,17 +19,16 @@ interface VerseData {
 const QuranPage: React.FC = () => {
   const [surahList, setSurahList] = useState<QuranApiSurah[]>([]);
   const [selectedSurahId, setSelectedSurahId] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [versesData, setVersesData] = useState<VerseData[]>([]);
   const [tafsirData, setTafsirData] = useState<Record<string, string>>({});
   
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<'mushaf' | 'tafsir'>('tafsir');
-  const [reciter, setReciter] = useState<'hussary' | 'minshawi'>('hussary');
   const [selectedTafsir, setSelectedTafsir] = useState<'muyassar' | 'mukhtasar'>('muyassar');
   const [fontSize, setFontSize] = useState<number>(28);
   
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isLoadingList, setIsLoadingList] = useState<boolean>(true);
   const [isLoadingVerses, setIsLoadingVerses] = useState<boolean>(false);
   const [isLoadingTafsir, setIsLoadingTafsir] = useState<boolean>(false);
@@ -37,8 +37,8 @@ const QuranPage: React.FC = () => {
   const tafsirCache = useRef<Record<string, Record<string, string>>>({});
   const versesCache = useRef<Record<number, VerseData[]>>({});
   
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { t, lang } = useLanguage();
+  const { playSurah, currentSurahId, isPlaying } = useAudio();
 
   // 1. Fetch Surah List
   useEffect(() => {
@@ -54,6 +54,16 @@ const QuranPage: React.FC = () => {
       });
   }, [lang]);
 
+  // Filter Surahs
+  const filteredSurahs = useMemo(() => {
+      return surahList.filter(s => 
+          s.name_simple.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.name_arabic.includes(searchQuery) ||
+          s.id.toString() === searchQuery
+      );
+  }, [surahList, searchQuery]);
+
+
   // 2. Fetch Verses (Parallel Fetching for Speed)
   useEffect(() => {
     const fetchVerses = async () => {
@@ -66,12 +76,6 @@ const QuranPage: React.FC = () => {
         setCurrentPage(1);
         setTafsirData({});
         setVersesData([]);
-
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-            setIsPlaying(false);
-        }
 
         try {
             // Initial fetch to get total pages
@@ -190,23 +194,12 @@ const QuranPage: React.FC = () => {
   }, [selectedSurahId, selectedTafsir, viewMode, versesData.length, lang]);
 
 
-  // Audio
-  const getAudioUrl = (surahId: number) => {
-     const formattedId = surahId.toString().padStart(3, '0');
-     const baseUrl = reciter === 'minshawi' 
-         ? 'https://server10.mp3quran.net/minsh' 
-         : 'https://server13.mp3quran.net/husr';
-     return `${baseUrl}/${formattedId}.mp3`;
+  const handlePlay = () => {
+      const surah = surahList.find(s => s.id === selectedSurahId);
+      if (surah) {
+          playSurah(selectedSurahId, surah.name_arabic, surah.name_simple);
+      }
   };
-
-  const togglePlay = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (audio.paused) audio.play().catch(e => console.error(e));
-    else audio.pause();
-  };
-
-  useEffect(() => { if (audioRef.current) audioRef.current.load(); }, [selectedSurahId, reciter]);
 
   // Pagination
   const totalPages = Math.ceil(versesData.length / VERSES_PER_UI_PAGE);
@@ -226,70 +219,72 @@ const QuranPage: React.FC = () => {
         description="القرآن الكريم"
       />
 
-      <audio
-        ref={audioRef}
-        src={getAudioUrl(selectedSurahId)}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-        preload="none"
-      />
+      {/* Control Bar */}
+      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 mb-6 sticky top-20 z-30">
+          <div className="flex flex-col gap-4">
+              {/* Search & Select */}
+              <div className="flex flex-col md:flex-row gap-4">
+                 {/* Surah Selection with Search */}
+                 <div className="relative w-full md:w-1/3">
+                     <input 
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={t.searchSurahPlaceholder}
+                        className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary"
+                     />
+                     <span className="absolute left-3 top-3.5 text-gray-400">🔍</span>
+                     
+                     {searchQuery && (
+                         <div className="absolute top-full left-0 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg mt-1 max-h-60 overflow-y-auto z-50">
+                             {filteredSurahs.map(s => (
+                                 <button 
+                                    key={s.id} 
+                                    className="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-gray-700 last:border-0"
+                                    onClick={() => {
+                                        setSelectedSurahId(s.id);
+                                        setSearchQuery('');
+                                    }}
+                                 >
+                                     <span className="font-bold">{s.id}. {lang === 'ar' ? s.name_arabic : s.name_simple}</span>
+                                 </button>
+                             ))}
+                         </div>
+                     )}
+                 </div>
 
-      {/* Bottom Player */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 p-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-pb">
-          <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4 w-full sm:w-auto">
-                  <button
-                      onClick={togglePlay}
-                      className={`w-12 h-12 flex items-center justify-center rounded-full font-bold transition-all shadow-md ${isPlaying ? 'bg-red-100 text-red-600' : 'bg-primary text-white'}`}
-                  >
-                      {isPlaying ? "||" : "▶"}
-                  </button>
-                  <div className="flex flex-col overflow-hidden">
-                      <span className="font-bold text-gray-900 dark:text-white truncate">
-                           {currentSurahInfo ? (lang === 'ar' ? currentSurahInfo.name_arabic : currentSurahInfo.name_simple) : ''}
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {reciter === 'hussary' ? t.reciterHussary : t.reciterMinshawi}
-                      </span>
+                 <select
+                    value={selectedSurahId}
+                    onChange={(e) => setSelectedSurahId(parseInt(e.target.value))}
+                    className="w-full md:w-1/3 p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl font-amiri text-lg"
+                >
+                    {isLoadingList ? <option>{t.loading}</option> : surahList.map(s => (
+                        <option key={s.id} value={s.id}>{s.id}. {lang === 'ar' ? s.name_arabic : s.name_simple}</option>
+                    ))}
+                </select>
+                
+                <div className="w-full md:w-1/3 flex items-center justify-end">
+                    <Button 
+                        onClick={handlePlay} 
+                        className={`w-full gap-2 ${currentSurahId === selectedSurahId && isPlaying ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                    >
+                        <span>{currentSurahId === selectedSurahId && isPlaying ? t.pauseRecitation : t.playRecitation}</span>
+                        <span>{currentSurahId === selectedSurahId && isPlaying ? '⏸' : '▶'}</span>
+                    </Button>
+                </div>
+              </div>
+
+              {/* View Options */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                  <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
+                      <button onClick={() => setViewMode('tafsir')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'tafsir' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeTafsir}</button>
+                      <button onClick={() => setViewMode('mushaf')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'mushaf' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeReading}</button>
                   </div>
-              </div>
-              <div className="flex items-center justify-end w-full sm:w-auto">
-                   <select
-                        value={reciter}
-                        onChange={(e) => setReciter(e.target.value as any)}
-                        className="bg-gray-100 dark:bg-slate-800 text-sm rounded-lg p-2 border-none focus:ring-2 focus:ring-primary"
-                   >
-                       <option value="hussary">{t.reciterHussary}</option>
-                       <option value="minshawi">{t.reciterMinshawi}</option>
-                   </select>
-              </div>
-          </div>
-      </div>
-
-      {/* Top Bar */}
-      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30">
-          <div className="w-full md:w-1/3">
-              <select
-                  value={selectedSurahId}
-                  onChange={(e) => setSelectedSurahId(parseInt(e.target.value))}
-                  className="w-full p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl font-amiri text-lg"
-              >
-                  {isLoadingList ? <option>{t.loading}</option> : surahList.map(s => (
-                      <option key={s.id} value={s.id}>{s.id}. {lang === 'ar' ? s.name_arabic : s.name_simple}</option>
-                  ))}
-              </select>
-          </div>
-
-          <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
-                  <button onClick={() => setViewMode('tafsir')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'tafsir' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeTafsir}</button>
-                  <button onClick={() => setViewMode('mushaf')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'mushaf' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeReading}</button>
-              </div>
-              <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 px-3 py-2 rounded-xl">
-                  <span className="text-xs">A-</span>
-                  <input type="range" min="20" max="50" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="w-20 accent-primary h-1.5 bg-gray-300 rounded-lg" />
-                  <span className="text-sm">A+</span>
+                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 px-3 py-2 rounded-xl">
+                      <span className="text-xs">A-</span>
+                      <input type="range" min="20" max="50" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="w-20 accent-primary h-1.5 bg-gray-300 rounded-lg" />
+                      <span className="text-sm">A+</span>
+                  </div>
               </div>
           </div>
       </div>

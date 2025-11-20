@@ -16,7 +16,10 @@ import FastingReminder from './components/FastingReminder';
 import Navbar from './components/Navbar';
 import Footer from './components/ui/Footer';
 import SEO from './components/SEO';
+import GlobalPlayer from './components/GlobalPlayer';
+import ScrollToTop from './components/ScrollToTop';
 import { LanguageContext } from './contexts/LanguageContext';
+import { AudioProvider } from './contexts/AudioContext';
 import { translations } from './i18n';
 
 const App: React.FC = () => {
@@ -74,6 +77,7 @@ const App: React.FC = () => {
 
   return (
     <LanguageContext.Provider value={languageContextValue}>
+      <AudioProvider>
         <HashRouter>
           <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-300 relative">
             <Navbar 
@@ -97,8 +101,11 @@ const App: React.FC = () => {
               </Routes>
             </main>
             <Footer />
+            <GlobalPlayer />
+            <ScrollToTop />
           </div>
         </HashRouter>
+      </AudioProvider>
     </LanguageContext.Provider>
   );
 };

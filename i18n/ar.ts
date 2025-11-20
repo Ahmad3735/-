@@ -78,6 +78,7 @@ export const ARABIC_UI_TEXT: Translation = {
   useMyLocation: "استخدام موقعي الحالي",
   errorCityNotFound: "لم يتم العثور على المدينة. يرجى التحقق من الاسم والمحاولة مرة أخرى.",
   selectSurah: "اختر السورة",
+  searchSurahPlaceholder: "ابحث عن سورة (مثال: الكهف)",
   explanationTitle: "شرح الحديث",
   showExplanation: "عرض الشرح",
   hideExplanation: "إخفاء الشرح",
@@ -153,4 +154,6 @@ export const ARABIC_UI_TEXT: Translation = {
   quizRestart: "إعادة المحاولة",
   quizCorrect: "إجابة صحيحة! أحسنت",
   quizWrong: "إجابة خاطئة. حاول مرة أخرى",
+
+  installApp: "تثبيت التطبيق",
 };

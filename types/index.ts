@@ -134,6 +134,26 @@ export interface QuizQuestion {
   explanation?: string;
 }
 
+// Audio Context Types
+export type ReciterId = 'hussary' | 'minshawi';
+
+export interface AudioState {
+  isPlaying: boolean;
+  currentSurahId: number | null;
+  reciter: ReciterId;
+  progress: number;
+  duration: number;
+  surahNameAr: string;
+  surahNameEn: string;
+}
+
+export interface AudioContextType extends AudioState {
+  playSurah: (surahId: number, nameAr: string, nameEn: string) => void;
+  togglePlay: () => void;
+  setReciter: (reciter: ReciterId) => void;
+  seek: (time: number) => void;
+}
+
 export interface Translation {
   appName: string;
   navHome: string;
@@ -146,8 +166,7 @@ export interface Translation {
   navNamesOfAllah: string;
   navFasting: string;
   navZakat: string;
-  navQuiz: string; // New
-  // Removed Verification keys
+  navQuiz: string; 
   navAskAI: string;
   footerQuote: string;
   allRightsReserved: string;
@@ -176,7 +195,6 @@ export interface Translation {
   loading: string;
   errorEnterHadith: string;
   
-  // Ask AI Keys
   errorEnterQuestion: string;
   geminiSystemInstruction: (lang: string) => string;
   askAITitle: string;
@@ -210,6 +228,7 @@ export interface Translation {
   useMyLocation: string;
   errorCityNotFound: string;
   selectSurah: string;
+  searchSurahPlaceholder: string; // New
   explanationTitle: string;
   showExplanation: string;
   hideExplanation: string;
@@ -285,4 +304,7 @@ export interface Translation {
   quizRestart: string;
   quizCorrect: string;
   quizWrong: string;
+
+  // General
+  installApp: string;
 }

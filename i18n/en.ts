@@ -76,6 +76,7 @@ export const ENGLISH_UI_TEXT: Translation = {
   useMyLocation: "Use My Location",
   errorCityNotFound: "City not found.",
   selectSurah: "Select Surah",
+  searchSurahPlaceholder: "Search Surah (e.g. Al-Kahf)",
   explanationTitle: "Hadith Explanation",
   showExplanation: "Show Explanation",
   hideExplanation: "Hide Explanation",
@@ -151,4 +152,7 @@ export const ENGLISH_UI_TEXT: Translation = {
   quizRestart: "Restart",
   quizCorrect: "Correct!",
   quizWrong: "Wrong answer.",
+
+  // General
+  installApp: "Install App",
 };
