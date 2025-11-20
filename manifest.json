@@ -1,0 +1,22 @@
+
+{
+  "short_name": "نور الإسلام",
+  "name": "نور الإسلام - رفيقك اليومي",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2232/2232856.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2232/2232856.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#10B981",
+  "background_color": "#F8FAFC",
+  "orientation": "portrait"
+}

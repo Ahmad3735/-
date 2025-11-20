@@ -1,28 +1,23 @@
-
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import { ARABIC_UI } from '../components/ui/constants/arabicUI';
-
-// Assume process.env.API_KEY is available in the execution environment
-const API_KEY = process.env.API_KEY;
+import { useLanguage } from '../contexts/LanguageContext';
 
 const HadithVerificationPage: React.FC = () => {
   const [hadithText, setHadithText] = useState<string>('');
   const [verificationResult, setVerificationResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const location = useLocation();
+  const verificationTriggeredRef = useRef(false);
+  const { t, lang } = useLanguage();
 
-  const handleVerifyHadith = useCallback(async () => {
-    if (!hadithText.trim()) {
-      setError(ARABIC_UI.errorEnterHadith);
-      return;
-    }
-    if (!API_KEY) {
-      setError(ARABIC_UI.errorApiKeyMissing);
-      console.error("API_KEY is not defined in process.env");
+  const handleVerifyHadith = useCallback(async (textToVerify: string) => {
+    if (!textToVerify.trim()) {
+      setError(t.errorEnterHadith);
       return;
     }
 
@@ -31,70 +26,79 @@ const HadithVerificationPage: React.FC = () => {
     setVerificationResult('');
 
     try {
-      const ai = new GoogleGenAI({ apiKey: API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: "gemini-2.5-pro",
-        contents: hadithText,
+        contents: textToVerify,
         config: {
-          systemInstruction: ARABIC_UI.geminiHadithVerificationInstruction,
+          systemInstruction: t.geminiHadithVerificationInstruction(lang),
         },
       });
       
       setVerificationResult(response.text);
     } catch (e: any) {
-      console.error("Error calling Gemini API for Hadith verification:", e);
-      setError(`${ARABIC_UI.errorApiGeneral}: ${e.message || 'Unknown error'}`);
+      setError(t.errorApiGeneral);
     } finally {
       setIsLoading(false);
     }
-  }, [hadithText]);
+  }, [t, lang]);
+  
+  useEffect(() => {
+    const prefilledText = location.state?.hadithText;
+    if (prefilledText && !verificationTriggeredRef.current) {
+        verificationTriggeredRef.current = true;
+        setHadithText(prefilledText);
+        handleVerifyHadith(prefilledText);
+    }
+  }, [location.state, handleVerifyHadith]);
 
   return (
     <div className="max-w-3xl mx-auto">
-      <Card title={ARABIC_UI.hadithVerificationPageTitle}>
-        <p className="mb-6 text-lg text-gray-700 text-right" dir="rtl">
-          {ARABIC_UI.hadithVerificationDescription}
-        </p>
-        
-        <div className="space-y-4">
-          <textarea
-            value={hadithText}
-            onChange={(e) => setHadithText(e.target.value)}
-            placeholder={ARABIC_UI.hadithVerificationPlaceholder}
-            rows={8}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent text-lg bg-white text-darkText font-kufi"
-            dir="rtl"
-            aria-label={ARABIC_UI.hadithVerificationPlaceholder}
-          />
-          <Button 
-            onClick={handleVerifyHadith} 
-            isLoading={isLoading} 
-            disabled={isLoading || !hadithText.trim()} 
-            className="w-full text-xl py-3"
-            aria-live="polite" // Announces changes when loading state changes
-            aria-busy={isLoading}
-          >
-            {isLoading ? ARABIC_UI.hadithVerificationLoading : ARABIC_UI.hadithVerificationButtonText}
-          </Button>
-        </div>
+      <div className="text-center mb-8 animate-fade-in">
+        <h1 className="text-3xl font-bold text-primary dark:text-primary-light mb-2">{t.hadithVerificationPageTitle}</h1>
+        <p className="text-gray-600 dark:text-gray-400">{t.hadithVerificationDescription}</p>
+      </div>
 
-        {error && (
-          <div role="alert" className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md text-center text-lg" dir="rtl">
+      <Card className="mb-8">
+          <div className="relative">
+            <textarea
+                value={hadithText}
+                onChange={(e) => setHadithText(e.target.value)}
+                placeholder={t.hadithVerificationPlaceholder}
+                rows={6}
+                className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent text-lg bg-white text-darkText font-amiri dark:bg-slate-800 dark:text-lightText dark:border-gray-600"
+            />
+             <div className="absolute bottom-4 left-4">
+                  <Button 
+                    onClick={() => handleVerifyHadith(hadithText)} 
+                    isLoading={isLoading} 
+                    disabled={isLoading || !hadithText.trim()} 
+                  >
+                    {t.hadithVerificationButtonText}
+                  </Button>
+             </div>
+          </div>
+      </Card>
+
+      {error && (
+          <div role="alert" className="mb-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-center">
             {error}
           </div>
         )}
 
-        {isLoading && !verificationResult && !error && <LoadingSpinner size="md" />}
-
-        {verificationResult && (
-          <div className="mt-8 p-6 bg-green-50 rounded-lg shadow" aria-live="polite">
-            <h3 className="text-2xl font-semibold text-primary mb-4 text-right" dir="rtl">{ARABIC_UI.hadithVerificationResultTitle}</h3>
-            <div className="whitespace-pre-wrap text-xl leading-loose text-darkText text-right font-kufi" dir="rtl">
-              {verificationResult}
-            </div>
+      {verificationResult && (
+          <div className="animate-slide-up relative">
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-4 py-1 rounded-full shadow-sm border border-gray-100 dark:border-gray-700">
+                 <span className="text-2xl">✅</span>
+             </div>
+            <Card className="bg-green-50/50 dark:bg-slate-800/50 border-green-100 dark:border-green-900/30">
+                 <h3 className="text-lg font-bold text-primary dark:text-primary-light mb-4 border-b border-green-100 dark:border-slate-700 pb-2">{t.hadithVerificationResultTitle}</h3>
+                 <div className="prose dark:prose-invert max-w-none text-lg text-gray-800 dark:text-gray-200 leading-loose font-kufi">
+                   {verificationResult}
+                 </div>
+            </Card>
           </div>
         )}
-      </Card>
     </div>
   );
 };

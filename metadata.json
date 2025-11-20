@@ -1,6 +1,10 @@
 {
   "name": "نور الإسلام",
   "description": "موقع إسلامي شامل يقدم مواقيت الصلاة، آيات قرآنية، أحاديث نبوية، وإمكانية طرح أسئلة دينية للذكاء الاصطناعي.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
   "prompt": ""
 }
