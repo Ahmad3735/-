@@ -11,6 +11,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, children, className = '', noPadding = false, style }) => {
   return (
     <div 
+      // Removed 'backdrop-blur-sm' and 'border-white/50' transparency which lags on low RAM devices
       className={`bg-white dark:bg-darkSurface rounded-3xl shadow-md dark:shadow-none border border-gray-100 dark:border-gray-800 transition-all duration-200 overflow-hidden ${className}`}
       style={style}
     >

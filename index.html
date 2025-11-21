@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>نور الإسلام</title>
+    <title>Hidaya | هداية</title>
     
     <!-- PWA & SEO Meta Tags -->
     <meta name="description" content="موقع إسلامي شامل يقدم القرآن الكريم، الأحاديث، أوقات الصلاة، والأذكار. يعمل بدون إنترنت." />
@@ -58,14 +58,16 @@
               darkSurface: '#1E293B', // Slate 800
               darkBg: '#0F172A', // Slate 900
             },
+            // Optimized shadows for performance (removed spread/blur complexity)
             boxShadow: {
-              'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-              'glow': '0 0 15px rgba(16, 185, 129, 0.3)',
+              'glass': '0 2px 10px rgba(0, 0, 0, 0.05)',
+              'glow': '0 0 10px rgba(16, 185, 129, 0.2)',
             },
+            // Simplified animations for lower CPU/GPU usage
             animation: {
-              'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'fade-in': 'fadeIn 0.4s ease-out',
+              'slide-up': 'slideUp 0.4s ease-out',
+              'pulse-slow': 'pulse 3s ease-in-out infinite',
             },
             keyframes: {
               fadeIn: {
@@ -73,7 +75,7 @@
                 '100%': { opacity: '1' },
               },
               slideUp: {
-                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '0%': { transform: 'translateY(10px)', opacity: '0' },
                 '100%': { transform: 'translateY(0)', opacity: '1' },
               }
             }
@@ -89,32 +91,34 @@
     "react/": "https://esm.sh/react@18.2.0/",
     "react": "https://esm.sh/react@18.2.0",
     "react-router-dom": "https://esm.sh/react-router-dom@6.24.1?deps=react@18.2.0",
-    "@google/genai": "https://esm.sh/@google/genai@1.1.0",
     "leaflet": "https://esm.sh/leaflet@1.9.4",
     "react-leaflet": "https://esm.sh/react-leaflet@4.2.1?deps=react@18.2.0,react-dom@18.2.0,leaflet@1.9.4",
     "adhan": "https://esm.sh/adhan@4.4.1",
     "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "url": "https://aistudiocdn.com/url@^0.11.4",
+    "path": "https://aistudiocdn.com/path@^0.12.7"
   }
 }
 </script>
 <style>
-  /* Custom Scrollbar */
+  /* Performance Optimization: Optimize painting */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Custom Scrollbar - Simplified */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background: #CBD5E1;
-    border-radius: 4px;
+    border-radius: 3px;
   }
   .dark ::-webkit-scrollbar-thumb {
     background: #334155;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8;
   }
 </style>
 </head>

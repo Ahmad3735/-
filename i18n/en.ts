@@ -2,7 +2,7 @@
 import type { Translation } from '../types';
 
 export const ENGLISH_UI_TEXT: Translation = {
-  appName: "Guidance",
+  appName: "Hidaya",
   navHome: "Home",
   navPrayerTimes: "Prayer Times",
   navPrayerTimesMap: "Map",
@@ -15,7 +15,6 @@ export const ENGLISH_UI_TEXT: Translation = {
   navZakat: "Zakat Calculator",
   navQuiz: "Islamic Quiz",
   navFeelings: "Heart's Pharmacy",
-  navAskAI: "",
 
   footerQuote: "Indeed, with hardship will be ease.",
   allRightsReserved: "All rights reserved",
@@ -37,21 +36,12 @@ export const ENGLISH_UI_TEXT: Translation = {
   viewOnMap: "View on Map",
   prayerTimesNote: "Prayer times are calculated based on the Umm al-Qura method. Please verify with your local mosque.",
   quranPageTitle: "The Holy Quran",
-  tafsirGenerationPrompt: (verseText: string, verseId: number) => `Provide a concise tafsir...`,
   pauseRecitation: "Pause",
   playRecitation: "Listen",
   tafsirForVerseTitle: "Tafsir for Verse ",
   loading: "Loading...",
-  errorEnterHadith: "",
+  errorEnterHadith: "Please enter the Hadith text",
   
-  errorEnterQuestion: "",
-  geminiSystemInstruction: (lang: string) => "",
-  askAITitle: "",
-  askAIDescription: "",
-  askAIPlaceholder: "",
-  askAIButton: "",
-  aiAnswerTitle: "",
-
   prayerTimesMapTitle: "Prayer Times Map",
   prayerTimesMapDescription: "Click on the map to select a location and view its prayer times.",
   errorApiPrayer: "Failed to fetch prayer times from the API.",
@@ -163,4 +153,5 @@ export const ENGLISH_UI_TEXT: Translation = {
   feelingsPracticalStep: "Practical Step",
 
   installApp: "Install App",
+  changeSurah: "Change Surah",
 };

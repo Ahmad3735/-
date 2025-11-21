@@ -182,8 +182,8 @@ export interface Translation {
   navFasting: string;
   navZakat: string;
   navQuiz: string; 
-  navFeelings: string; // NEW
-  navAskAI: string;
+  navFeelings: string;
+  
   footerQuote: string;
   allRightsReserved: string;
   welcomeTo: string;
@@ -204,21 +204,12 @@ export interface Translation {
   viewOnMap: string;
   prayerTimesNote: string;
   quranPageTitle: string;
-  tafsirGenerationPrompt: (verseText: string, verseId: number) => string;
   pauseRecitation: string;
   playRecitation: string;
   tafsirForVerseTitle: string;
   loading: string;
   errorEnterHadith: string;
   
-  errorEnterQuestion: string;
-  geminiSystemInstruction: (lang: string) => string;
-  askAITitle: string;
-  askAIDescription: string;
-  askAIPlaceholder: string;
-  askAIButton: string;
-  aiAnswerTitle: string;
-
   prayerTimesMapTitle: string;
   prayerTimesMapDescription: string;
   errorApiPrayer: string;
@@ -244,7 +235,7 @@ export interface Translation {
   useMyLocation: string;
   errorCityNotFound: string;
   selectSurah: string;
-  searchSurahPlaceholder: string; // New
+  searchSurahPlaceholder: string;
   explanationTitle: string;
   showExplanation: string;
   hideExplanation: string;
@@ -329,6 +320,6 @@ export interface Translation {
   feelingsPropheticDua: string;
   feelingsPracticalStep: string;
 
-  // General
   installApp: string;
+  changeSurah: string;
 }

@@ -20,6 +20,7 @@ const QuranPage: React.FC = () => {
   const [surahList, setSurahList] = useState<QuranApiSurah[]>([]);
   const [selectedSurahId, setSelectedSurahId] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const [versesData, setVersesData] = useState<VerseData[]>([]);
   const [tafsirData, setTafsirData] = useState<Record<string, string>>({});
@@ -78,7 +79,6 @@ const QuranPage: React.FC = () => {
         setVersesData([]);
 
         try {
-            // Initial fetch to get total pages
             const perPage = 50;
             const initialRes = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${selectedSurahId}&per_page=${perPage}&page=1`);
             if (!initialRes.ok) throw new Error("Failed to fetch verses");
@@ -219,78 +219,112 @@ const QuranPage: React.FC = () => {
         description="القرآن الكريم"
       />
 
-      {/* Control Bar */}
-      <div className="bg-white dark:bg-darkSurface rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 mb-6 sticky top-20 z-30">
-          <div className="flex flex-col gap-4">
-              {/* Search & Select */}
-              <div className="flex flex-col md:flex-row gap-4">
-                 {/* Surah Selection with Search */}
-                 <div className="relative w-full md:w-1/3">
-                     <input 
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={t.searchSurahPlaceholder}
-                        className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary"
-                     />
-                     <span className="absolute left-3 top-3.5 text-gray-400">🔍</span>
-                     
-                     {searchQuery && (
-                         <div className="absolute top-full left-0 w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg mt-1 max-h-60 overflow-y-auto z-50">
-                             {filteredSurahs.map(s => (
-                                 <button 
-                                    key={s.id} 
-                                    className="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-100 dark:border-gray-700 last:border-0"
-                                    onClick={() => {
-                                        setSelectedSurahId(s.id);
-                                        setSearchQuery('');
-                                    }}
-                                 >
-                                     <span className="font-bold">{s.id}. {lang === 'ar' ? s.name_arabic : s.name_simple}</span>
-                                 </button>
-                             ))}
-                         </div>
-                     )}
-                 </div>
-
-                 <select
-                    value={selectedSurahId}
-                    onChange={(e) => setSelectedSurahId(parseInt(e.target.value))}
-                    className="w-full md:w-1/3 p-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-xl font-amiri text-lg"
-                >
-                    {isLoadingList ? <option>{t.loading}</option> : surahList.map(s => (
-                        <option key={s.id} value={s.id}>{s.id}. {lang === 'ar' ? s.name_arabic : s.name_simple}</option>
-                    ))}
-                </select>
-                
-                <div className="w-full md:w-1/3 flex items-center justify-end">
-                    <Button 
-                        onClick={handlePlay} 
-                        className={`w-full gap-2 ${currentSurahId === selectedSurahId && isPlaying ? 'bg-red-500 hover:bg-red-600' : ''}`}
-                    >
-                        <span>{currentSurahId === selectedSurahId && isPlaying ? t.pauseRecitation : t.playRecitation}</span>
-                        <span>{currentSurahId === selectedSurahId && isPlaying ? '⏸' : '▶'}</span>
-                    </Button>
-                </div>
-              </div>
-
-              {/* View Options */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100 dark:border-gray-800">
-                  <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
-                      <button onClick={() => setViewMode('tafsir')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'tafsir' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeTafsir}</button>
-                      <button onClick={() => setViewMode('mushaf')} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'mushaf' ? 'bg-white dark:bg-slate-700 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeReading}</button>
+      {/* Top Navigation Bar (Compact & Sticky) */}
+      <div className="sticky top-[64px] z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-2">
+              {/* Surah Select Button */}
+              <button 
+                  onClick={() => setIsDrawerOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl transition-colors min-w-[160px]"
+              >
+                  <span className="text-lg">📖</span>
+                  <div className="flex flex-col items-start text-sm">
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">{t.changeSurah}</span>
+                      <span className="font-bold text-primary truncate max-w-[120px]">
+                          {currentSurahInfo ? (lang === 'ar' ? currentSurahInfo.name_arabic : currentSurahInfo.name_simple) : t.loading}
+                      </span>
                   </div>
-                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-800 px-3 py-2 rounded-xl">
-                      <span className="text-xs">A-</span>
-                      <input type="range" min="20" max="50" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="w-20 accent-primary h-1.5 bg-gray-300 rounded-lg" />
-                      <span className="text-sm">A+</span>
-                  </div>
-              </div>
+                  <span className="text-gray-400 ml-auto">▼</span>
+              </button>
+
+              {/* Play Button (Compact) */}
+              <button 
+                    onClick={handlePlay} 
+                    className={`p-3 rounded-full transition-all shadow-md ${currentSurahId === selectedSurahId && isPlaying ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}
+              >
+                  {currentSurahId === selectedSurahId && isPlaying ? (
+                      <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                  ) : (
+                      <svg className="w-6 h-6 fill-current ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  )}
+              </button>
+          </div>
+          
+          {/* View Controls (Collapsible or smaller row) */}
+          <div className="px-4 py-2 bg-gray-50 dark:bg-black/20 flex items-center justify-between overflow-x-auto gap-4 text-sm">
+               <div className="flex gap-1 bg-gray-200 dark:bg-slate-800 p-0.5 rounded-lg flex-shrink-0">
+                   <button onClick={() => setViewMode('tafsir')} className={`px-3 py-1 rounded-md transition-all ${viewMode === 'tafsir' ? 'bg-white dark:bg-slate-600 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeTafsir}</button>
+                   <button onClick={() => setViewMode('mushaf')} className={`px-3 py-1 rounded-md transition-all ${viewMode === 'mushaf' ? 'bg-white dark:bg-slate-600 shadow text-primary' : 'text-gray-500'}`}>{t.viewModeReading}</button>
+               </div>
+               
+               <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-xs">A</span>
+                    <input type="range" min="20" max="50" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="w-20 accent-primary h-1.5 bg-gray-300 rounded-lg" />
+               </div>
           </div>
       </div>
 
+      {/* Surah Selection Drawer (Modal) */}
+      {isDrawerOpen && (
+          <div className="fixed inset-0 z-50 flex justify-end">
+              {/* Backdrop */}
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={() => setIsDrawerOpen(false)}></div>
+              
+              {/* Drawer Panel */}
+              <div className="relative w-full max-w-md bg-white dark:bg-slate-900 h-full shadow-2xl flex flex-col animate-fade-in">
+                  <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-slate-900">
+                      <h3 className="font-bold text-lg">{t.selectSurah}</h3>
+                      <button onClick={() => setIsDrawerOpen(false)} className="p-2 bg-gray-100 dark:bg-slate-800 rounded-full">✕</button>
+                  </div>
+                  
+                  <div className="p-4 bg-gray-50 dark:bg-slate-950">
+                      <div className="relative">
+                        <input 
+                            type="text" 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder={t.searchSurahPlaceholder}
+                            className="w-full p-3 pl-10 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary"
+                            autoFocus
+                        />
+                        <span className="absolute left-3 top-3.5 text-gray-400">🔍</span>
+                      </div>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                      {isLoadingList ? (
+                          <div className="flex justify-center py-10"><LoadingSpinner /></div>
+                      ) : (
+                          filteredSurahs.map(s => (
+                              <button
+                                  key={s.id}
+                                  onClick={() => {
+                                      setSelectedSurahId(s.id);
+                                      setIsDrawerOpen(false);
+                                      setSearchQuery('');
+                                  }}
+                                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-colors ${selectedSurahId === s.id ? 'bg-primary/10 text-primary border border-primary/20' : 'hover:bg-gray-50 dark:hover:bg-slate-800 border border-transparent'}`}
+                              >
+                                  <div className="flex items-center gap-4">
+                                      <span className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${selectedSurahId === s.id ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-slate-700 text-gray-500'}`}>
+                                          {s.id}
+                                      </span>
+                                      <div className="text-right">
+                                          <p className="font-bold text-base">{lang === 'ar' ? s.name_arabic : s.name_simple}</p>
+                                          <p className="text-xs text-gray-400">{s.revelation_place === 'makkah' ? 'مكية' : 'مدنية'} • {s.verses_count} آية</p>
+                                      </div>
+                                  </div>
+                                  {selectedSurahId === s.id && <span>✓</span>}
+                              </button>
+                          ))
+                      )}
+                  </div>
+              </div>
+          </div>
+      )}
+
       {/* Content */}
-      <div className="min-h-[60vh]">
+      <div className="container mx-auto px-4 py-6 min-h-[60vh]">
           {isLoadingVerses ? (
               <div className="flex flex-col items-center justify-center py-20">
                   <LoadingSpinner size="lg" />

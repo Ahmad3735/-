@@ -1,5 +1,5 @@
-const CACHE_NAME = 'noor-islam-cache-v18';
-const DATA_CACHE_NAME = 'noor-islam-data-v18';
+const CACHE_NAME = 'hidaya-cache-v2';
+const DATA_CACHE_NAME = 'hidaya-data-v2';
 
 // Critical assets to cache immediately
 const STATIC_ASSETS = [
@@ -12,12 +12,10 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  // Force new SW to activate immediately
   self.skipWaiting();
   console.log('[Service Worker] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching Static Assets');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -44,7 +42,7 @@ self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
   // 1. API Requests: Stale-While-Revalidate
-  // (Return cached version immediately, then fetch update in background)
+  // This allows previously visited Surahs/Adhkar to work offline immediately
   if (
       requestUrl.href.includes('api.quran.com') || 
       requestUrl.href.includes('api.aladhan.com') ||
@@ -61,10 +59,8 @@ self.addEventListener('fetch', (event) => {
               return networkResponse;
             })
             .catch((err) => {
-                // Network failed, return nothing (will rely on cache)
-                console.log('Network fetch failed for API, using cache', err);
+                console.log('[Service Worker] Network fetch failed for API, using cache');
             });
-          
           return cachedResponse || fetchPromise;
         });
       })
@@ -72,45 +68,69 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Navigation (HTML) & App Shell: Stale-While-Revalidate
-  // Ensures the app opens instantly from cache, but updates in background for next visit.
-  if (event.request.mode === 'navigate' || 
-      requestUrl.origin === location.origin && (
+  // 2. External Libraries (esm.sh, Fonts, Tailwind): Cache First, then Network
+  // These files rarely change, so we prioritize Cache to ensure UI loads offline
+  if (
+      requestUrl.hostname.includes('esm.sh') || 
+      requestUrl.hostname.includes('cdn.tailwindcss') || 
+      requestUrl.hostname.includes('fonts.googleapis') ||
+      requestUrl.hostname.includes('fonts.gstatic') ||
+      requestUrl.hostname.includes('unpkg.com')
+  ) {
+      event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request).then((networkResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              // Opaque responses (like from CDNs) can be cached
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          });
+        })
+      );
+      return;
+  }
+
+  // 3. App Shell & Code (HTML, JS, TSX): Stale-While-Revalidate
+  // This guarantees the app opens OFFLINE immediately, then updates in background.
+  if (
+      requestUrl.origin === location.origin && 
+      (
+        requestUrl.pathname === '/' ||
         requestUrl.pathname.endsWith('.html') || 
         requestUrl.pathname.endsWith('.js') || 
-        requestUrl.pathname.endsWith('.tsx') ||
         requestUrl.pathname.endsWith('.ts') || 
+        requestUrl.pathname.endsWith('.tsx') ||
+        requestUrl.pathname.endsWith('.css') ||
         requestUrl.pathname.endsWith('.json')
       )
   ) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
         return cache.match(event.request).then((cachedResponse) => {
-            const fetchPromise = fetch(event.request).then((networkResponse) => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-            }).catch(() => cachedResponse); // If offline, just return cache
-            
-            return cachedResponse || fetchPromise;
+          const fetchPromise = fetch(event.request)
+            .then((networkResponse) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            })
+            .catch(() => {
+               // If offline and no cache, we are in trouble, but ideally cache exists from install
+            });
+          // Return cached response immediately if available (Offline First feel)
+          return cachedResponse || fetchPromise;
         });
       })
     );
     return;
   }
 
-  // 3. Static Assets (Fonts, Images, CSS): Cache First
-  // These rarely change, so we check cache first to save data and speed up load.
+  // 4. Default Fallback
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).then((networkResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-              // Only cache valid responses
-              if (networkResponse.ok) {
-                cache.put(event.request, networkResponse.clone());
-              }
-              return networkResponse;
-          });
-      });
+      return response || fetch(event.request);
     })
   );
 });

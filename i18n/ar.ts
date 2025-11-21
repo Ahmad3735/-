@@ -15,9 +15,7 @@ export const ARABIC_UI_TEXT: Translation = {
   navZakat: "حاسبة الزكاة",
   navQuiz: "اختبر معلوماتك",
   navFeelings: "صيدلية القلوب",
-  // Removed navHadithVerification and navAskAI
-  navAskAI: "", // Deprecated
-
+  
   footerQuote: "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
   allRightsReserved: "جميع الحقوق محفوظة",
   welcomeTo: "أهلاً بك في",
@@ -38,21 +36,11 @@ export const ARABIC_UI_TEXT: Translation = {
   viewOnMap: "عرض على الخريطة",
   prayerTimesNote: "تم حساب أوقات الصلاة باستخدام طريقة أم القرى. يرجى التحقق من المسجد المحلي.",
   quranPageTitle: "القرآن الكريم",
-  tafsirGenerationPrompt: (verseText: string, verseId: number) => `قدم تفسيراً موجزاً للآية ${verseId} من سورة الفاتحة: "${verseText}".`,
   pauseRecitation: "إيقاف",
   playRecitation: "استماع",
   tafsirForVerseTitle: "تفسير الآية ",
   loading: "جاري التحميل...",
-  errorEnterHadith: "",
-  
-  // Ask AI Translations (Deprecated/Empty)
-  errorEnterQuestion: "",
-  geminiSystemInstruction: (lang: string) => "",
-  askAITitle: "",
-  askAIDescription: "",
-  askAIPlaceholder: "",
-  askAIButton: "",
-  aiAnswerTitle: "",
+  errorEnterHadith: "الرجاء إدخال نص الحديث",
   
   prayerTimesMapTitle: "خريطة أوقات الصلاة",
   prayerTimesMapDescription: "انقر على الخريطة لتحديد موقع وعرض أوقات الصلاة الخاصة به.",
@@ -165,4 +153,5 @@ export const ARABIC_UI_TEXT: Translation = {
   feelingsPracticalStep: "خطوة عملية",
 
   installApp: "تثبيت التطبيق",
+  changeSurah: "تغيير السورة",
 };
