@@ -24,10 +24,10 @@
     <!-- LCP Optimization: Preload Hero Background -->
     <link rel="preload" as="image" href="https://www.transparenttextures.com/patterns/arabesque.png">
 
-    <!-- Fonts: Non-blocking load with Swap -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Kufi+Arabic:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <!-- Fonts: Optimized - Only load Amiri for Quran, use System fonts for UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Kufi+Arabic:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     </noscript>
 
     <!-- Leaflet CSS: Defer/Non-blocking (Lazy loaded page) -->
@@ -50,9 +50,11 @@
         theme: {
           extend: {
             fontFamily: {
-              'kufi': ['Noto Kufi Arabic', 'sans-serif'],
+              // Use system fonts for better performance (Zero layout shift, zero download)
+              'kufi': ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+              'sans': ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+              // Keep Amiri only for Quranic text
               'amiri': ['Amiri', 'serif'],
-              'sans': ['Plus Jakarta Sans', 'sans-serif'],
             },
             colors: {
               primary: {

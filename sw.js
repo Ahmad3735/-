@@ -7,7 +7,8 @@ const STATIC_ASSETS = [
   '/index.html',
   '/manifest.json',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Kufi+Arabic:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap',
+  // Optimized Font: Only Amiri (Regular + Bold)
+  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 ];
 
@@ -40,8 +41,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Defensive check: Only handle http/https requests.
-  // This prevents 'TypeError: Failed to construct 'URL': Invalid URL' 
-  // when the browser makes requests to chrome-extension://, data:, or blob: schemes.
   if (!event.request.url.startsWith('http')) {
     return;
   }
@@ -50,12 +49,10 @@ self.addEventListener('fetch', (event) => {
   try {
     requestUrl = new URL(event.request.url);
   } catch (error) {
-    // If URL is somehow still invalid, ignore the request
     return;
   }
 
   // 1. API Requests: Stale-While-Revalidate
-  // This allows previously visited Surahs/Adhkar to work offline immediately
   if (
       requestUrl.href.includes('api.quran.com') || 
       requestUrl.href.includes('api.aladhan.com') ||
@@ -82,7 +79,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 2. External Libraries (esm.sh, Fonts, Tailwind): Cache First, then Network
-  // These files rarely change, so we prioritize Cache to ensure UI loads offline
   if (
       requestUrl.hostname.includes('esm.sh') || 
       requestUrl.hostname.includes('cdn.tailwindcss') || 
@@ -97,7 +93,6 @@ self.addEventListener('fetch', (event) => {
           }
           return fetch(event.request).then((networkResponse) => {
             return caches.open(CACHE_NAME).then((cache) => {
-              // Opaque responses (like from CDNs) can be cached
               cache.put(event.request, networkResponse.clone());
               return networkResponse;
             });
@@ -107,8 +102,7 @@ self.addEventListener('fetch', (event) => {
       return;
   }
 
-  // 3. App Shell & Code (HTML, JS, TSX): Stale-While-Revalidate
-  // This guarantees the app opens OFFLINE immediately, then updates in background.
+  // 3. App Shell & Code: Stale-While-Revalidate
   if (
       requestUrl.origin === location.origin && 
       (
@@ -130,9 +124,8 @@ self.addEventListener('fetch', (event) => {
               return networkResponse;
             })
             .catch(() => {
-               // If offline and no cache, we are in trouble, but ideally cache exists from install
+               // Offline fallback
             });
-          // Return cached response immediately if available (Offline First feel)
           return cachedResponse || fetchPromise;
         });
       })
