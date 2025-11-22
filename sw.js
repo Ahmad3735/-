@@ -1,5 +1,5 @@
-const CACHE_NAME = 'hidaya-cache-v2';
-const DATA_CACHE_NAME = 'hidaya-data-v2';
+const CACHE_NAME = 'hidaya-cache-v3';
+const DATA_CACHE_NAME = 'hidaya-data-v3';
 
 // Critical assets to cache immediately
 const STATIC_ASSETS = [
@@ -7,8 +7,6 @@ const STATIC_ASSETS = [
   '/index.html',
   '/manifest.json',
   'https://cdn.tailwindcss.com',
-  // Optimized Font: Only Amiri (Regular + Bold)
-  'https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 ];
 
@@ -78,12 +76,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. External Libraries (esm.sh, Fonts, Tailwind): Cache First, then Network
+  // 2. External Libraries (esm.sh, Tailwind): Cache First, then Network
   if (
       requestUrl.hostname.includes('esm.sh') || 
       requestUrl.hostname.includes('cdn.tailwindcss') || 
-      requestUrl.hostname.includes('fonts.googleapis') ||
-      requestUrl.hostname.includes('fonts.gstatic') ||
       requestUrl.hostname.includes('unpkg.com')
   ) {
       event.respondWith(
