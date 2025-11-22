@@ -1,5 +1,5 @@
-const CACHE_NAME = 'hidaya-cache-v3';
-const DATA_CACHE_NAME = 'hidaya-data-v3';
+const CACHE_NAME = 'hidaya-cache-v4';
+const DATA_CACHE_NAME = 'hidaya-data-v4';
 
 // Critical assets to cache immediately
 const STATIC_ASSETS = [
