@@ -38,24 +38,24 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-10 pb-10">
+    <div className="space-y-12 pb-12">
       {/* Hero Section */}
-      <section className="relative rounded-3xl overflow-hidden shadow-2xl animate-fade-in">
+      <section className="relative rounded-3xl overflow-hidden shadow-2xl animate-fade-in transform transition-all">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-dark to-primary opacity-90 mix-blend-multiply"></div>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10"></div>
         <div className="relative z-10 px-6 py-16 sm:py-24 text-center text-white max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl font-bold mb-6 font-amiri leading-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold mb-8 font-amiri leading-tight drop-shadow-lg">
             {t.welcomeTo} <span className="text-secondary-light">{t.appName}</span>
           </h1>
-          <p className="text-lg sm:text-2xl mb-10 text-white/90 max-w-2xl mx-auto font-light">
+          <p className="text-lg sm:text-2xl mb-10 text-white/95 max-w-2xl mx-auto font-light leading-relaxed">
             {t.homeSubtitle}
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/prayer-times">
-                <Button variant="secondary" size="lg" className="shadow-xl">{t.navPrayerTimes}</Button>
+          <div className="flex flex-wrap justify-center gap-6">
+            <Link to="/prayer-times" aria-label={t.navPrayerTimes}>
+                <Button variant="secondary" size="lg" className="shadow-xl min-w-[160px]">{t.navPrayerTimes}</Button>
             </Link>
-            <Link to="/quran">
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary-dark dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-primary-dark">{t.navQuran}</Button>
+            <Link to="/quran" aria-label={t.navQuran}>
+                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary-dark dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-primary-dark min-w-[160px]">{t.navQuran}</Button>
             </Link>
           </div>
         </div>
@@ -63,35 +63,35 @@ const HomePage: React.FC = () => {
 
       {/* Daily Content Grid */}
       <section className="grid md:grid-cols-2 gap-6 sm:gap-8">
-        <Card className="border-t-4 border-primary h-full" title={t.dailyVerseTitle}>
+        <Card className="border-t-4 border-primary h-full transform hover:-translate-y-1 transition-transform duration-300" title={t.dailyVerseTitle}>
            {dailyVerse ? (
             <div className="flex flex-col justify-between h-full">
-              <div className="text-center mb-4">
-                 <span className="text-6xl opacity-10 text-primary">❝</span>
-                 <p className="text-2xl sm:text-3xl leading-loose font-amiri text-gray-800 dark:text-gray-200 relative z-10 -mt-8">
+              <div className="text-center mb-6">
+                 <span className="text-6xl opacity-10 text-primary select-none">❝</span>
+                 <p className="text-2xl sm:text-3xl leading-[2.5] font-amiri text-gray-800 dark:text-gray-200 relative z-10 -mt-8 px-2">
                     {dailyVerse.arabic}
                  </p>
-                 <span className="text-6xl opacity-10 text-primary block text-left -mt-4">❞</span>
+                 <span className="text-6xl opacity-10 text-primary block text-left -mt-4 select-none">❞</span>
               </div>
-              <p className="text-sm font-medium text-primary-dark text-center mt-4 bg-primary/10 py-2 px-4 rounded-full self-center">
+              <p className="text-sm font-bold text-primary-dark text-center mt-4 bg-primary/10 py-3 px-6 rounded-full self-center">
                 {dailyVerse.surah}
               </p>
             </div>
           ) : (
             <div className="flex justify-center items-center h-40">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
             </div>
           )}
         </Card>
 
-        <Card className="border-t-4 border-secondary h-full" title={t.dailyHadithTitle}>
+        <Card className="border-t-4 border-secondary h-full transform hover:-translate-y-1 transition-transform duration-300" title={t.dailyHadithTitle}>
           <div className="flex flex-col justify-between h-full">
-             <div className="text-center mb-4">
-                 <p className="text-xl sm:text-2xl leading-loose font-amiri text-gray-800 dark:text-gray-200">
+             <div className="text-center mb-6">
+                 <p className="text-xl sm:text-2xl leading-[2.5] font-amiri text-gray-800 dark:text-gray-200 px-2">
                     {DAILY_HADITH.arabic}
                  </p>
              </div>
-             <p className="text-sm font-medium text-secondary-dark text-center mt-4 bg-secondary/10 py-2 px-4 rounded-full self-center">
+             <p className="text-sm font-bold text-secondary-dark text-center mt-4 bg-secondary/10 py-3 px-6 rounded-full self-center">
                 {DAILY_HADITH.source}
              </p>
           </div>
@@ -100,17 +100,18 @@ const HomePage: React.FC = () => {
 
       {/* Quick Access Section */}
       <section>
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2 inline-block">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8 border-b border-gray-200 dark:border-gray-700 pb-4 inline-block">
             {t.quickAccess}
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-6">
           {quickLinks.map((item) => (
-            <Link key={item.to} to={item.to} className="group">
-              <div className="bg-white dark:bg-darkSurface p-6 rounded-2xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center h-full text-center">
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-4 ${item.color}`}>
+            <Link key={item.to} to={item.to} className="group block h-full">
+              <div className="bg-white dark:bg-darkSurface p-6 rounded-3xl shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:-translate-y-2 flex flex-col items-center justify-center min-h-[160px] text-center h-full relative overflow-hidden">
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 ${item.color.split(' ')[0]}`}></div>
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 transition-transform group-hover:scale-110 duration-300 ${item.color}`}>
                     {item.icon}
                 </div>
-                <span className="font-semibold text-gray-800 dark:text-gray-200 group-hover:text-primary transition-colors">
+                <span className="font-bold text-lg text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">
                     {item.label}
                 </span>
               </div>

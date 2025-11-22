@@ -149,10 +149,8 @@ const PrayerTimesPage: React.FC = () => {
     }
   };
 
-  // Determine next prayer logic could go here for highlighting
-
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-8 pb-12">
       <div className="text-center animate-fade-in">
         <h1 className="text-3xl font-bold text-primary dark:text-primary-light mb-2">{t.prayerTimesTitle}</h1>
         <p className="text-gray-600 dark:text-gray-400">{t.prayerTimesInfo}</p>
@@ -160,22 +158,23 @@ const PrayerTimesPage: React.FC = () => {
 
       <Card className="relative overflow-visible">
          {/* Search Bar */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-grow">
                  <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t.enterCityName}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-slate-800 dark:border-gray-600 dark:text-white"
+                    className="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-slate-800 dark:border-gray-600 dark:text-white shadow-sm"
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    aria-label={t.search}
                 />
-                 <span className="absolute left-3 top-3.5 text-gray-400">🔍</span>
+                 <span className="absolute left-4 top-4 text-gray-400 text-lg">🔍</span>
             </div>
-            <Button onClick={handleSearch} disabled={isLoading || !searchQuery.trim()} className="sm:w-auto w-full">
+            <Button onClick={handleSearch} disabled={isLoading || !searchQuery.trim()} className="sm:w-auto w-full h-[52px]">
               {t.search}
             </Button>
-             <Button onClick={() => { setSearchQuery(''); getLocation(); }} variant="ghost" disabled={isLoading} className="sm:w-auto w-full" title={t.useMyLocation}>
+             <Button onClick={() => { setSearchQuery(''); getLocation(); }} variant="ghost" disabled={isLoading} className="sm:w-auto w-full h-[52px]" title={t.useMyLocation}>
               📍
             </Button>
         </div>
@@ -187,7 +186,7 @@ const PrayerTimesPage: React.FC = () => {
                 <p className="mt-4 text-gray-500">{t.fetchingPrayerTimes}</p>
             </div>
         ) : error ? (
-           <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-center mb-6">
+           <div className="p-6 bg-red-50 border border-red-200 text-red-600 rounded-xl text-center mb-6">
                 {error}
             </div>
         ) : (
@@ -201,29 +200,29 @@ const PrayerTimesPage: React.FC = () => {
                 )}
 
                 {infoMessage && (
-                   <div className="p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-center mb-6 text-sm">
+                   <div className="p-4 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-center mb-6 text-sm font-medium">
                        {infoMessage}
                    </div>
                 )}
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                     {prayerTimes?.map((prayer, index) => (
                         <div
                             key={index}
-                            className="flex justify-between items-center p-4 bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all hover:border-primary/30 hover:bg-green-50/30"
+                            className="flex justify-between items-center p-5 bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-md transition-all hover:border-primary/30 hover:bg-green-50/30 min-h-[72px]"
                         >
-                            <div className="flex items-center gap-3">
-                                <span className="text-2xl">{PRAYER_ORDER[index].icon}</span>
-                                <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">{prayer.name}</span>
+                            <div className="flex items-center gap-4">
+                                <span className="text-3xl">{PRAYER_ORDER[index].icon}</span>
+                                <span className="text-xl font-bold text-gray-700 dark:text-gray-200">{prayer.name}</span>
                             </div>
-                            <span className="text-xl font-bold font-mono text-primary dark:text-primary-light tracking-wide">{prayer.time}</span>
+                            <span className="text-2xl font-bold font-mono text-primary dark:text-primary-light tracking-wide bg-gray-50 dark:bg-slate-900 px-4 py-1 rounded-lg">{prayer.time}</span>
                         </div>
                     ))}
                 </div>
                 
-                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <div className="mt-10 pt-8 border-t border-gray-100 dark:border-gray-700">
                      <Link to="/prayer-times-map">
-                        <Button variant="outline" className="w-full justify-between group">
+                        <Button variant="outline" className="w-full justify-between group min-h-[56px]">
                           <span>{t.viewOnMap}</span>
                           <span className="group-hover:translate-x-1 transition-transform">→</span>
                         </Button>
