@@ -18,6 +18,11 @@
     <link rel="preconnect" href="https://esm.sh" crossorigin>
     <link rel="dns-prefetch" href="https://api.quran.com">
     <link rel="dns-prefetch" href="https://quranenc.com">
+
+    <!-- Single Optimized Webfont: Amiri (for Quran/Headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     
     <!-- LCP Optimization: Preload Hero Background -->
     <link rel="preload" as="image" href="https://www.transparenttextures.com/patterns/arabesque.png">
@@ -42,21 +47,21 @@
         theme: {
           extend: {
             fontFamily: {
-              // Use system fonts for better performance (Zero layout shift, zero download)
+              // Use system fonts for UI to keep performance high
               'kufi': ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
               'sans': ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-              // Use system serif for Quranic text (Traditional Arabic is often available on OS for Arabic)
-              'amiri': ['"Traditional Arabic"', 'serif'],
+              // Use Amiri for Quranic/Arabic text
+              'amiri': ['Amiri', 'serif'],
             },
             colors: {
               primary: {
-                DEFAULT: '#047857', // Emerald 700 - WCAG AA Compliant (>4.5:1 on white)
+                DEFAULT: '#047857', // Emerald 700
                 light: '#10B981', // Emerald 500
                 dark: '#064E3B', // Emerald 900
                 deep: '#022c22', // Emerald 950
               },
               secondary: {
-                DEFAULT: '#B45309', // Amber 700 - WCAG AA Compliant
+                DEFAULT: '#B45309', // Amber 700
                 light: '#F59E0B', // Amber 500
                 dark: '#78350F', // Amber 900
               },
@@ -65,12 +70,10 @@
               darkSurface: '#1E293B', // Slate 800
               darkBg: '#0F172A', // Slate 900
             },
-            // Optimized shadows for performance (removed spread/blur complexity)
             boxShadow: {
               'glass': '0 2px 10px rgba(0, 0, 0, 0.05)',
-              'glow': '0 0 10px rgba(4, 120, 87, 0.2)', // Adjusted for new primary
+              'glow': '0 0 10px rgba(4, 120, 87, 0.2)',
             },
-            // Simplified animations for lower CPU/GPU usage
             animation: {
               'fade-in': 'fadeIn 0.4s ease-out',
               'slide-up': 'slideUp 0.4s ease-out',
@@ -109,11 +112,9 @@
 }
 </script>
 <style>
-  /* Performance Optimization: Optimize painting */
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  /* Custom Scrollbar - Simplified */
   ::-webkit-scrollbar {
     width: 6px;
   }
