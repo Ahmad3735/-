@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -8,10 +8,10 @@ import { DAILY_HADITH, QURAN_VERSES_FOR_HOME } from '../components/ui/constants/
 import type { DailyQuranVerse } from '../types';
 
 const HomePage: React.FC = () => {
-  const [dailyVerse, setDailyVerse] = useState<DailyQuranVerse | null>(null);
   const { t, lang } = useLanguage();
 
-  useEffect(() => {
+  // Initialize synchronously to prevent layout shift
+  const [dailyVerse] = useState<DailyQuranVerse>(() => {
     const getDayOfYear = (date: Date) => {
       const start = new Date(date.getFullYear(), 0, 0);
       const diff = (date.getTime() - start.getTime()) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
@@ -21,19 +21,20 @@ const HomePage: React.FC = () => {
 
     const dayOfYear = getDayOfYear(new Date());
     const verseIndex = dayOfYear % QURAN_VERSES_FOR_HOME.length;
-    setDailyVerse(QURAN_VERSES_FOR_HOME[verseIndex]);
-  }, []);
+    return QURAN_VERSES_FOR_HOME[verseIndex];
+  });
 
+  // Updated text colors to 700 scale for better contrast ratio (Accessibility)
   const quickLinks = [
-    { to: "/prayer-times", label: t.navPrayerTimes, icon: "🕒", color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300" },
-    { to: "/quran", label: t.navQuran, icon: "📖", color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300" },
-    { to: "/feelings", label: t.navFeelings, icon: "❤️", color: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300" }, // NEW
-    { to: "/hadith", label: t.navHadith, icon: "📜", color: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300" },
-    { to: "/adhkar", label: t.navAdhkar, icon: "📿", color: "bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300" },
-    { to: "/names-of-allah", label: t.navNamesOfAllah, icon: "✨", color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300" },
-    { to: "/fasting", label: t.navFasting, icon: "📅", color: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300" },
-    { to: "/zakat", label: t.navZakat, icon: "💰", color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300" },
-    { to: "/quiz", label: t.navQuiz, icon: "🧠", color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300" },
+    { to: "/prayer-times", label: t.navPrayerTimes, icon: "🕒", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
+    { to: "/quran", label: t.navQuran, icon: "📖", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    { to: "/feelings", label: t.navFeelings, icon: "❤️", color: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300" },
+    { to: "/hadith", label: t.navHadith, icon: "📜", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
+    { to: "/adhkar", label: t.navAdhkar, icon: "📿", color: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300" },
+    { to: "/names-of-allah", label: t.navNamesOfAllah, icon: "✨", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" },
+    { to: "/fasting", label: t.navFasting, icon: "📅", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300" },
+    { to: "/zakat", label: t.navZakat, icon: "💰", color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" },
+    { to: "/quiz", label: t.navQuiz, icon: "🧠", color: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300" },
   ];
 
   return (
@@ -72,7 +73,7 @@ const HomePage: React.FC = () => {
                  </p>
                  <span className="text-6xl opacity-10 text-primary block text-left -mt-4">❞</span>
               </div>
-              <p className="text-sm font-medium text-primary text-center mt-4 bg-primary/10 py-2 px-4 rounded-full self-center">
+              <p className="text-sm font-medium text-primary-dark text-center mt-4 bg-primary/10 py-2 px-4 rounded-full self-center">
                 {dailyVerse.surah}
               </p>
             </div>
@@ -90,7 +91,7 @@ const HomePage: React.FC = () => {
                     {DAILY_HADITH.arabic}
                  </p>
              </div>
-             <p className="text-sm font-medium text-secondary text-center mt-4 bg-secondary/10 py-2 px-4 rounded-full self-center">
+             <p className="text-sm font-medium text-secondary-dark text-center mt-4 bg-secondary/10 py-2 px-4 rounded-full self-center">
                 {DAILY_HADITH.source}
              </p>
           </div>

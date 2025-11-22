@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hidaya | هداية</title>
     
     <!-- PWA & SEO Meta Tags -->
     <meta name="description" content="موقع إسلامي شامل يقدم القرآن الكريم، الأحاديث، أوقات الصلاة، والأذكار. يعمل بدون إنترنت." />
-    <meta name="theme-color" content="#10B981" />
-    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#047857" />
+    <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2232/2232856.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -43,15 +43,15 @@
             },
             colors: {
               primary: {
-                DEFAULT: '#10B981', // Emerald 500
-                light: '#6EE7B7', // Emerald 300
-                dark: '#047857', // Emerald 700
-                deep: '#064e3b', // Emerald 900
+                DEFAULT: '#047857', // Emerald 700 - WCAG AA Compliant (>4.5:1 on white)
+                light: '#10B981', // Emerald 500
+                dark: '#064E3B', // Emerald 900
+                deep: '#022c22', // Emerald 950
               },
               secondary: {
-                DEFAULT: '#F59E0B', // Amber 500
-                light: '#FCD34D', // Amber 300
-                dark: '#B45309', // Amber 700
+                DEFAULT: '#B45309', // Amber 700 - WCAG AA Compliant
+                light: '#F59E0B', // Amber 500
+                dark: '#78350F', // Amber 900
               },
               accent: '#F8FAFC', // Slate 50
               surface: '#FFFFFF',
@@ -61,7 +61,7 @@
             // Optimized shadows for performance (removed spread/blur complexity)
             boxShadow: {
               'glass': '0 2px 10px rgba(0, 0, 0, 0.05)',
-              'glow': '0 0 10px rgba(16, 185, 129, 0.2)',
+              'glow': '0 0 10px rgba(4, 120, 87, 0.2)', // Adjusted for new primary
             },
             // Simplified animations for lower CPU/GPU usage
             animation: {
