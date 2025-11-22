@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -19,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({ theme, onThemeToggle }) => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     // PWA Install Prompt Logic
     const handleBeforeInstallPrompt = (e: Event) => {
