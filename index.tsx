@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -18,6 +17,13 @@ root.render(
 // Robust Service Worker Registration for Offline Support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // Defensive check: Service Workers only work on http/https.
+    // This prevents errors when running in blob: or data: URL environments (like some previews).
+    if (!window.location.protocol.startsWith('http')) {
+      console.log('Service Worker registration skipped: Unsupported protocol', window.location.protocol);
+      return;
+    }
+
     // Construct absolute URL manually to avoid "Invalid URL" errors with the URL constructor
     // and to ensure we don't accidentally resolve to the wrong origin (e.g. ai.studio)
     // which causes a SecurityError.
